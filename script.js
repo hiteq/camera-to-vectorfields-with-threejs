@@ -23,6 +23,10 @@ let isWhiteColorFixed = false;
 let gridWidth, gridHeight; // 그리드의 가로, 세로 크기를 저장할 변수 추가
 let aspectRatio;
 
+let stream; // 웹캠 스트림을 저장할 변수
+
+let isPreviewVisible = true; // 프리뷰 가시성 상태를 저장할 변수
+
 function calculateGridDimensions() {
     aspectRatio = window.innerWidth / window.innerHeight;
     if (aspectRatio > 1) {
@@ -77,18 +81,41 @@ function init() {
     videoCanvas = document.createElement('canvas');
     videoContext = videoCanvas.getContext('2d');
 
+    initCamera(); // 초기 카메라 설정
+    
+    // 프리뷰 초기 상태 설정
+    video.style.display = isPreviewVisible ? 'block' : 'none';
+
+    window.addEventListener('resize', onWindowResize, false);
+
+    initializeInputs(); // 여기에 초기화 함수 호출 추가
+}
+
+function initCamera() {
     navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
-        .then(function(stream) {
+        .then(function(videoStream) {
+            stream = videoStream;
             video.srcObject = stream;
             video.play();
         })
         .catch(function(error) {
             console.error("웹캠을 사용할 수 없습니다:", error);
         });
+}
 
-    window.addEventListener('resize', onWindowResize, false);
+function toggleCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+        stream = null;
+    } else {
+        initCamera();
+    }
+}
 
-    initializeInputs(); // 여기에 초기화 함수 호출 추가
+function togglePreview() {
+    isPreviewVisible = !isPreviewVisible;
+    video.style.display = isPreviewVisible ? 'block' : 'none';
 }
 
 function onWindowResize() {
@@ -391,3 +418,7 @@ document.getElementById('neonIntensityValue').addEventListener('input', function
 document.getElementById('whiteColorFixed').addEventListener('change', function(e) {
     toggleWhiteColorFixed(e.target.checked);
 });
+
+// UI 컨트롤 연결 부분에 추가
+document.getElementById('toggleCamera').addEventListener('click', toggleCamera);
+document.getElementById('togglePreview').addEventListener('click', togglePreview);

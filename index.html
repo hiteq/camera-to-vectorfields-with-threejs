@@ -9,13 +9,21 @@
 <body>
     <video id="webcamVideo" autoplay playsinline></video>
     <div id="controls">
-
-      <div>
-        <label for="particleSize">파티클 크기:</label>
-        <input type="range" id="particleSize" min="0.01" max="0.1" step="0.001">
-        <input type="number" id="particleSizeValue" min="0.01" max="0.1" step="0.001">
-    </div>
-      <div>
+        <!-- 카메라 온오프 버튼 -->
+        <div>
+            <button id="toggleCamera">카메라 켜기/끄기</button>
+        </div>
+        <!-- 카메라 프리뷰 온오프 버튼 추가 -->
+        <div>
+            <button id="togglePreview">프리뷰 켜기/끄기</button>
+        </div>
+        
+        <div>
+            <label for="particleSize">파티클 크기:</label>
+            <input type="range" id="particleSize" min="0.01" max="0.1" step="0.001">
+            <input type="number" id="particleSizeValue" min="0.01" max="0.1" step="0.001">
+        </div>
+        <div>
             <label for="minBrightness">최소 밝기:</label>
             <input type="range" id="minBrightness" min="0" max="1" step="0.01">
             <input type="number" id="minBrightnessValue" min="0" max="1" step="0.01">
