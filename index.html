@@ -8,6 +8,18 @@
 </head>
 <body>
     <video id="webcamVideo" autoplay playsinline></video>
+    <div id="controls">
+      <label>Min Brightness: <input type="range" id="minBrightness" min="0" max="1" step="0.01" value="0.2"></label><br>
+      <label>Max Brightness: <input type="range" id="maxBrightness" min="0" max="1" step="0.01" value="0.5"></label><br>
+      <label>Particle Size: <input type="range" id="particleSize" min="0.01" max="0.1" step="0.001" value="0.025"></label><br>
+      <label>Grid Size: <input type="number" id="gridSize" min="10" max="100" value="40"></label><br>
+      <label>Rotation X: <input type="range" id="rotationX" min="0" max="1" step="0.01" value="0.5"></label><br>
+      <label>Rotation Y: <input type="range" id="rotationY" min="0" max="1" step="0.01" value="0.5"></label><br>
+      <label>Rotation Z: <input type="range" id="rotationZ" min="0" max="1" step="0.01" value="0"></label><br>
+      <label>Neon Effect: <input type="checkbox" id="neonEffect" checked></label><br>
+      <label>Neon Intensity: <input type="range" id="neonIntensity" min="0" max="1" step="0.01" value="0.01"></label><br>
+      <label>White Color Fixed: <input type="checkbox" id="whiteColorFixed" checked></label><br>
+  </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>

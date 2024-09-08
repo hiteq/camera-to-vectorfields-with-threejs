@@ -5,12 +5,20 @@ let currentImageData;
 // 글로벌 변수 수정 및 추가
 let minBrightness = 0.2;
 let maxBrightness = 0.5;
-let particleSize = 0.03; // 고정된 파티클 크기
+let particleSize = 0.025; // 고정된 파티클 크기
+let gridSize = 40; // 그리드 사이즈를 글로벌 변수로 추가
 
 // 회전 계수 추가
-let rotationFactorX = 1;
+let rotationFactorX = 0.5;// 0.0 ~ 1.0
 let rotationFactorY = 0.5;
-let rotationFactorZ = 0.25;
+let rotationFactorZ = 0;
+
+// 네온 효과를 위한 글로벌 변수 추가
+let isNeonEffect = true;
+let neonIntensity = 0.01; // 0.0 ~ 1.0 사이의 값
+
+// 파티클 컬러를 흰색으로 고정하는 기능을 위한 글로벌 변수 추가
+let isWhiteColorFixed = true;
 
 function init() {
     scene = new THREE.Scene();
@@ -29,7 +37,6 @@ function init() {
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-    const gridSize = 40;
     const totalParticles = gridSize * gridSize;
     instancedMesh = new THREE.InstancedMesh(planeGeometry, material, totalParticles);
 
@@ -115,7 +122,19 @@ function updateParticles() {
             const g = currentImageData.data[colorIndex * 4 + 1] / 255;
             const b = currentImageData.data[colorIndex * 4 + 2] / 255;
 
-            color.setRGB(r, g, b);
+            if (isWhiteColorFixed) {
+                color.setRGB(1, 1, 1); // 흰색으로 고정
+            } else {
+                let adjustedR = r, adjustedG = g, adjustedB = b;
+                if (isNeonEffect) {
+                    // 네온 효과 적용
+                    adjustedR = r + (1 - r) * neonIntensity;
+                    adjustedG = g + (1 - g) * neonIntensity;
+                    adjustedB = b + (1 - b) * neonIntensity;
+                }
+                color.setRGB(adjustedR, adjustedG, adjustedB);
+            }
+
             instancedMesh.setColorAt(index, color);
 
             const brightness = calculateBrightness(r, g, b);
@@ -167,12 +186,107 @@ function setBrightnessRange(min, max) {
     maxBrightness = Math.max(0, Math.min(1, max));
 }
 
-// 회전 계수를 설정하는 함수 추가
+// 회전 계수를 설정는 함수 추가
 function setRotationFactors(x, y, z) {
     rotationFactorX = x;
     rotationFactorY = y;
     rotationFactorZ = z;
 }
 
+// 그리드 사이즈를 설정하는 함수 추
+function setGridSize(size) {
+    gridSize = size;
+    // 그리드 사이즈가 변경되면 파티클 시스템을 재생성해야 합니다.
+    recreateParticleSystem();
+}
+
+// 파티클 시스템을 재생성하는 함수
+function recreateParticleSystem() {
+    scene.remove(instancedMesh);
+
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    const totalParticles = gridSize * gridSize;
+    instancedMesh = new THREE.InstancedMesh(planeGeometry, material, totalParticles);
+
+    const matrix = new THREE.Matrix4();
+    const color = new THREE.Color();
+
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            const index = i * gridSize + j;
+            const x = (i / (gridSize - 1)) * 2 - 1;
+            const y = 1 - (j / (gridSize - 1)) * 2;
+
+            matrix.makeScale(particleSize, particleSize, 1);
+            matrix.setPosition(x, y, 0);
+            instancedMesh.setMatrixAt(index, matrix);
+
+            color.setRGB(1, 1, 1);
+            instancedMesh.setColorAt(index, color);
+        }
+    }
+
+    scene.add(instancedMesh);
+}
+
+// 네온 효과를 켜고 끄는 함수
+function toggleNeonEffect(enable) {
+    isNeonEffect = enable;
+}
+
+// 네온 효과의 강도를 설정하는 함수
+function setNeonIntensity(intensity) {
+    neonIntensity = Math.max(0, Math.min(1, intensity));
+}
+
+// 파티클 컬러를 흰색으로 고정하는 기능을 켜고 끄는 함수
+function toggleWhiteColorFixed(enable) {
+    isWhiteColorFixed = enable;
+}
+
 init();
 animate();
+
+// UI 컨트롤 연결
+document.getElementById('minBrightness').addEventListener('input', function(e) {
+    minBrightness = parseFloat(e.target.value);
+});
+
+document.getElementById('maxBrightness').addEventListener('input', function(e) {
+    maxBrightness = parseFloat(e.target.value);
+});
+
+document.getElementById('particleSize').addEventListener('input', function(e) {
+    particleSize = parseFloat(e.target.value);
+    recreateParticleSystem();
+});
+
+document.getElementById('gridSize').addEventListener('input', function(e) {
+    setGridSize(parseInt(e.target.value));
+});
+
+document.getElementById('rotationX').addEventListener('input', function(e) {
+    rotationFactorX = parseFloat(e.target.value);
+});
+
+document.getElementById('rotationY').addEventListener('input', function(e) {
+    rotationFactorY = parseFloat(e.target.value);
+});
+
+document.getElementById('rotationZ').addEventListener('input', function(e) {
+    rotationFactorZ = parseFloat(e.target.value);
+});
+
+document.getElementById('neonEffect').addEventListener('change', function(e) {
+    toggleNeonEffect(e.target.checked);
+});
+
+document.getElementById('neonIntensity').addEventListener('input', function(e) {
+    setNeonIntensity(parseFloat(e.target.value));
+});
+
+document.getElementById('whiteColorFixed').addEventListener('change', function(e) {
+    toggleWhiteColorFixed(e.target.checked);
+});
