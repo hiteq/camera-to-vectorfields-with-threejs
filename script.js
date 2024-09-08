@@ -4,9 +4,9 @@ let currentImageData;
 
 // 글로벌 변수 추가
 let minBrightness = 0.0;
-let maxBrightness = 1.0;
-let minSize = 0.005;
-let maxSize = 0.05;
+let maxBrightness = 0.5;
+let minSize = 0.001;
+let maxSize = 0.02;
 
 function init() {
     scene = new THREE.Scene();
@@ -19,7 +19,7 @@ function init() {
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-    const gridSize = 100;
+    const gridSize = 50;
     const totalParticles = gridSize * gridSize;
     instancedMesh = new THREE.InstancedMesh(planeGeometry, material, totalParticles);
 
@@ -89,6 +89,8 @@ function updateParticles() {
     const gridSize = Math.sqrt(instancedMesh.count);
     const matrix = new THREE.Matrix4();
     const color = new THREE.Color();
+    const quaternion = new THREE.Quaternion();
+    const rotationAxis = new THREE.Vector3(0, 0, 1); // z축 회전
 
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
@@ -108,10 +110,19 @@ function updateParticles() {
             const normalizedBrightness = (brightness - minBrightness) / (maxBrightness - minBrightness);
             const size = minSize + normalizedBrightness * (maxSize - minSize);
 
-            instancedMesh.getMatrixAt(index, matrix);
-            matrix.makeScale(size, size, 1);
-            // y 좌표를 반전하지 않고 그대로 사용합니다.
-            matrix.setPosition((i / (gridSize - 1)) * 2 - 1, (j / (gridSize - 1)) * 2 - 1, 0);
+            // 명도에 따른 회전 각도 계산 (0 ~ 180도)
+            const rotationAngle = normalizedBrightness * Math.PI; // 라디안 단위
+
+            // 회전 쿼터니언 생성
+            quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+
+            // 매트릭스 생성 및 적용
+            matrix.compose(
+                new THREE.Vector3((i / (gridSize - 1)) * 2 - 1, (j / (gridSize - 1)) * 2 - 1, 0),
+                quaternion,
+                new THREE.Vector3(size, size, 1)
+            );
+
             instancedMesh.setMatrixAt(index, matrix);
         }
     }
