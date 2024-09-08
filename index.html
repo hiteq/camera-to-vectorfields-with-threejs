@@ -9,17 +9,57 @@
 <body>
     <video id="webcamVideo" autoplay playsinline></video>
     <div id="controls">
-      <label>Min Brightness: <input type="range" id="minBrightness" min="0" max="1" step="0.01" value="0.2"></label><br>
-      <label>Max Brightness: <input type="range" id="maxBrightness" min="0" max="1" step="0.01" value="0.5"></label><br>
-      <label>Particle Size: <input type="range" id="particleSize" min="0.01" max="0.1" step="0.001" value="0.025"></label><br>
-      <label>Grid Size: <input type="number" id="gridSize" min="10" max="100" value="40"></label><br>
-      <label>Rotation X: <input type="range" id="rotationX" min="0" max="1" step="0.01" value="0.5"></label><br>
-      <label>Rotation Y: <input type="range" id="rotationY" min="0" max="1" step="0.01" value="0.5"></label><br>
-      <label>Rotation Z: <input type="range" id="rotationZ" min="0" max="1" step="0.01" value="0"></label><br>
-      <label>Neon Effect: <input type="checkbox" id="neonEffect" checked></label><br>
-      <label>Neon Intensity: <input type="range" id="neonIntensity" min="0" max="1" step="0.01" value="0.01"></label><br>
-      <label>White Color Fixed: <input type="checkbox" id="whiteColorFixed" checked></label><br>
-  </div>
+
+      <div>
+        <label for="particleSize">파티클 크기:</label>
+        <input type="range" id="particleSize" min="0.01" max="0.1" step="0.001">
+        <input type="number" id="particleSizeValue" min="0.01" max="0.1" step="0.001">
+    </div>
+      <div>
+            <label for="minBrightness">최소 밝기:</label>
+            <input type="range" id="minBrightness" min="0" max="1" step="0.01">
+            <input type="number" id="minBrightnessValue" min="0" max="1" step="0.01">
+        </div>
+        <div>
+            <label for="maxBrightness">최대 밝기:</label>
+            <input type="range" id="maxBrightness" min="0" max="1" step="0.01">
+            <input type="number" id="maxBrightnessValue" min="0" max="1" step="0.01">
+        </div>
+
+        <div>
+            <label for="gridSize">그리드 크기:</label>
+            <input type="range" id="gridSize" min="10" max="100">
+            <input type="number" id="gridSizeValue" min="10" max="100">
+        </div>
+        <div>
+            <label for="rotationX">회전 X:</label>
+            <input type="range" id="rotationX" min="0" max="1" step="0.01">
+            <input type="number" id="rotationXValue" min="0" max="1" step="0.01">
+        </div>
+        <div>
+            <label for="rotationY">회전 Y:</label>
+            <input type="range" id="rotationY" min="0" max="1" step="0.01">
+            <input type="number" id="rotationYValue" min="0" max="1" step="0.01">
+        </div>
+        <div>
+            <label for="rotationZ">회전 Z:</label>
+            <input type="range" id="rotationZ" min="0" max="1" step="0.01">
+            <input type="number" id="rotationZValue" min="0" max="1" step="0.01">
+        </div>
+        <div>
+            <label for="neonEffect">네온 효과:</label>
+            <input type="checkbox" id="neonEffect">
+        </div>
+        <div>
+            <label for="neonIntensity">네온 강도:</label>
+            <input type="range" id="neonIntensity" min="0" max="1" step="0.01">
+            <input type="number" id="neonIntensityValue" min="0" max="1" step="0.01">
+        </div>
+        <div>
+            <label for="whiteColorFixed">흰색 고정:</label>
+            <input type="checkbox" id="whiteColorFixed">
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>
